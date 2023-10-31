@@ -1,0 +1,10 @@
+server:
+  port: 17896
+
+spring:
+  data:
+    mongodb:
+#      host: localhost
+#      database: acticledb
+#      port: 27017
+      uri: mongodb://localhost:27017/articledb
