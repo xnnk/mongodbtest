@@ -3,6 +3,12 @@ package com.lee.article.service;
 import com.lee.article.entity.Comment;
 import com.lee.article.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +24,9 @@ public class CommentService {
 
     @Autowired
     private CommentRepository repository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     /**
      * 保存一个评论
@@ -62,6 +71,35 @@ public class CommentService {
     public Comment findCommentById(String id){
         //调用dao
         return repository.findById(id).get();
+    }
+
+    /**
+     * 根据父评论查找相关的子评论
+     * @param parentId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public Page<Comment> findCommentListByParentId(String parentId, int page, int pageSize) {
+        return repository.findByParentid(parentId, PageRequest.of(page - 1, pageSize));
+    }
+
+    /**
+     * 根据id将该评论的点赞数+1
+     * @param id
+     */
+    public void updateCommentLikenum(String id) {
+
+        // 查询条件:当字段_id = id
+        Query query = Query.query(Criteria.where("articleid").is(id));
+
+        // 更新条件:likenum字段 + 1
+        Update update = new Update();
+        update.inc("likenum");
+
+        // 执行
+        mongoTemplate.updateFirst(query, update, Comment.class);
+
     }
 
 }

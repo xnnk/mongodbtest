@@ -84,5 +84,8 @@ public class Comment implements Serializable {
      */
     private String parentid;
 
+    /**
+     * 评论ID
+     */
     private String articleid;
 }

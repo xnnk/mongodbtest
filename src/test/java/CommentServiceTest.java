@@ -59,4 +59,9 @@ public class CommentServiceTest {
         System.out.println(comment);
     }
 
+    @Test
+    public void like(){
+        commentService.updateCommentLikenum("100000");
+    }
+
 }
